@@ -1,0 +1,13 @@
+site_name: Techdocs
+repo_url: https://github.com/valitydev/techdocs
+theme:
+  name: material
+  language: ru
+  palette:
+    primary: blue grey
+    accent: teal
+  font: false
+  features:
+    - navigation.sections
+    # - toc.integrate
+# strict: true
