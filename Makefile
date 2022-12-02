@@ -9,4 +9,4 @@ build: image
 	$(DOCKER) run -v $(PWD):/workspace "$(IMAGE_TAG):latest"
 
 serve: image
-	$(DOCKER) run -v $(PWD):/workspace -p 8000:8000 "$(IMAGE_TAG):latest" serve -a 0.0.0.0:8000
+	$(DOCKER) run -v $(PWD):/workspace -p 8000:8000 "$(IMAGE_TAG):latest" mkdocs serve -a 0.0.0.0:8000

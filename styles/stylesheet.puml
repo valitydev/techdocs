@@ -1,0 +1,131 @@
+@startuml
+
+' Color Definition
+' Choose the style you want by applying them here.
+
+!define STYLE_ACCENT #00695C
+!define STYLE_BGC #FFFFFF
+!define STYLE_LIGHT_BGC #A7FFEB
+!define STYLE_NOTE_BGC #FFF9C4
+!define STYLE_LIGHT_FGC #BDBDBD
+!define STYLE_FGC #212121
+
+!define STYLE_COLOR_ERROR #FF6E40
+!define STYLE_COLOR_WARN #FFAB40
+
+skinparam {
+
+    ' Global Options
+    DPI 144
+    Shadowing false
+    DefaultFontName sans-serif
+    ' DefaultMonospacedFontName Inconsolata
+    DefaultFontColor STYLE_FGC
+    BackgroundColor transparent
+
+    ' Styles - Borders
+    ArrowColor STYLE_ACCENT
+    ActivityBorderColor STYLE_FGC
+    ActivityDiamondBorderColor STYLE_FGC
+    ActorBorderColor STYLE_FGC
+    AgentBorderColor STYLE_FGC
+    ArtifactBorderColor STYLE_FGC
+    BoundaryBorderColor STYLE_FGC
+    ClassBorderColor STYLE_FGC
+    CloudBorderColor STYLE_FGC
+    CollectionsBorderColor STYLE_FGC
+    ComponentBorderColor STYLE_FGC
+    ControlBorderColor STYLE_FGC
+    DatabaseBorderColor STYLE_FGC
+    EntityBorderColor STYLE_FGC
+    FileBorderColor STYLE_FGC
+    FolderBorderColor STYLE_FGC
+    FrameBorderColor STYLE_FGC
+    InterfaceBorderColor STYLE_FGC
+    LegendBorderColor STYLE_FGC
+    NodeBorderColor STYLE_FGC
+    NoteBorderColor STYLE_FGC
+    ObjectBorderColor STYLE_FGC
+    PackageBorderColor STYLE_FGC
+    ParticipantBorderColor STYLE_FGC
+    PartitionBorderColor STYLE_FGC
+    QueueBorderColor STYLE_FGC
+    RectangleBorderColor STYLE_FGC
+    SequenceBoxBorderColor STYLE_LIGHT_FGC
+    SequenceDividerBorderColor STYLE_FGC
+    SequenceGroupBorderColor STYLE_FGC
+    SequenceLifeLineBorderColor STYLE_FGC
+    SequenceReferenceBorderColor STYLE_FGC
+    StackBorderColor STYLE_FGC
+    StateBorderColor STYLE_FGC
+    StorageBorderColor STYLE_FGC
+    SwimlaneBorderColor STYLE_FGC
+    UsecaseBorderColor STYLE_FGC
+
+    ' Styles - Backgrounds
+
+    ActivityBackgroundColor STYLE_LIGHT_BGC
+    ActivityDiamondBackgroundColor STYLE_BGC
+    ActorBackgroundColor STYLE_LIGHT_BGC
+    AgentBackgroundColor STYLE_BGC
+    ArtifactBackgroundColor STYLE_BGC
+    BoundaryBackgroundColor STYLE_BGC
+    ClassBackgroundColor STYLE_BGC
+    ClassHeaderBackgroundColor STYLE_BGC
+    CloudBackgroundColor STYLE_BGC
+    CollectionsBackgroundColor STYLE_BGC
+    ComponentBackgroundColor STYLE_BGC
+    ControlBackgroundColor STYLE_BGC
+    DatabaseBackgroundColor STYLE_BGC
+    EntityBackgroundColor STYLE_BGC
+    FileBackgroundColor STYLE_BGC
+    FolderBackgroundColor STYLE_BGC
+    FrameBackgroundColor STYLE_BGC
+    IconPackageBackgroundColor STYLE_BGC
+    IconPrivateBackgroundColor STYLE_BGC
+    IconProtectedBackgroundColor STYLE_BGC
+    IconPublicBackgroundColor STYLE_BGC
+    InterfaceBackgroundColor STYLE_BGC
+    LegendBackgroundColor STYLE_BGC
+    NodeBackgroundColor STYLE_BGC
+    NoteBackgroundColor STYLE_NOTE_BGC
+    ObjectBackgroundColor STYLE_BGC
+    PackageBackgroundColor STYLE_BGC
+    ParticipantBackgroundColor STYLE_LIGHT_BGC
+    PartitionBackgroundColor STYLE_BGC
+    QueueBackgroundColor STYLE_BGC
+    RectangleBackgroundColor STYLE_BGC
+    SequenceBoxBackgroundColor STYLE_BGC
+    SequenceDividerBackgroundColor STYLE_BGC
+    SequenceGroupBackgroundColor STYLE_BGC
+    SequenceGroupBodyBackgroundColor STYLE_BGC
+    SequenceLifeLineBackgroundColor STYLE_BGC
+    SequenceReferenceBackgroundColor STYLE_BGC
+    SequenceReferenceHeaderBackgroundColor STYLE_BGC
+    StackBackgroundColor STYLE_BGC
+    StateBackgroundColor STYLE_LIGHT_BGC
+    StereotypeABackgroundColor STYLE_BGC
+    StereotypeCBackgroundColor STYLE_BGC
+    StereotypeEBackgroundColor STYLE_BGC
+    StereotypeIBackgroundColor STYLE_BGC
+    StereotypeNBackgroundColor STYLE_BGC
+    StorageBackgroundColor STYLE_BGC
+    TitleBackgroundColor STYLE_BGC
+    UsecaseBackgroundColor STYLE_BGC
+
+    ' Other Settings
+    ' These settings are included in the language specs, but
+    ' it's not recommended to be applied.
+    'TitleBorderColor STYLE_ACCENT
+    'DiagramBorderColor STYLE_ACCENT
+
+    ' Custom Style
+    ' All items below can be safely commented out.
+    ' This will override the options listed above.
+    SequenceBoxFontStyle Normal
+    RoundCorner 8
+    'Monochrome true
+    'NoteFontStyle Italic
+
+}
+@enduml

@@ -11,3 +11,27 @@ theme:
     - navigation.sections
     # - toc.integrate
 # strict: true
+plugins:
+  - autolinks
+  - htmlproofer
+  - search:
+      lang:
+        - en
+        - ru
+markdown_extensions:
+    - admonition
+    - smarty
+    - pymdownx.extra
+    - pymdownx.caret
+    - pymdownx.details
+    - toc:
+        permalink: True
+        slugify: !!python/object/apply:pymdownx.slugs.slugify {kwds: {case: lower}}
+    - plantuml_markdown:
+        format: svg_inline
+nav:
+    - 'Machinegun':
+      - 'Назначение': 'machinegun/overview.md'
+      - 'Концепции': 'machinegun/concepts.md'
+      - 'Реализация': 'machinegun/implementation.md'
+      - 'Интерфейсы': 'machinegun/api.md'
