@@ -272,14 +272,28 @@ terminal_ref(#route{terminal_ref = Ref}) ->
 
     13.1.2.3.2. После прохода по всему массиву возвращается пара `{ChosenScoredRoute, IdealRoute}`
 
-    13.1.2.4. Формирование контекста для выбора (`get_route_choice_context`)
+    13.1.2.4. Формирование контекста для выбора (`get_route_choice_context`).
+    Формируется объект RouteChoiceContext, куда записываются поля:
+    - `chosen_route` - `ChosenRoute`
+    - `preferable_route` - `IdealRoute`
+    - `reject_reason` - заполняется при помощи функции [map_route_switch_reason](meta/map_route_switch_reason.md)
 
-    13.1.2.5. 
+    13.1.2.5. RouteChoiceContext возвращается выше по контексту
 
-    13.1.2.6. 
-
+    13.1.3.  RouteChoiceContext возвращается выше по контексту
 
     13.2. Логирование выбора и смена статуса на `route_changed`
+
+    13.2. `ChoosenRoute` используется в качестве финального выбора роута. 
+    Если роут не был найден выбрасывается ошибка
+    
+    ```erlang
+        Failure = {failure,
+            payproc_errors:construct(
+                'PaymentFailure',
+                {no_route_found, {forbidden, #payproc_error_GeneralFailure{}}}
+            )},
+    ```
 
 
 
