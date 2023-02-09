@@ -272,6 +272,29 @@ CAPTURED/CANCELLED так же обрабатываются в адаптере 
 
 3. Обработка этапа [risk_scoring](meta/risc-scoring-workflow.md) платежа 
 
+4. Обработка этапа [routing](meta/routing-workflow.md) платежа
+
+5. Обработка этапа [cash_flow_building](meta/cash-flow-building.md) платежа
+
+6. Обработка этапа [processing_session](meta/process-session.md) платежа. 
+   Данный этап может исполняться несколько раз до момента, когда:
+   - сессия завершилась успешно - статус сессии равен `finished`, а результат 
+   `session_succeeded`;
+   - получено событие `payment_rollback_started` (будет переход на этап 
+   `processing_failure`) 
+
+7. Обработка этапа [processing_accounter](meta/), а так же генерация 
+   нового события payment_status_changed
+
+8. Обработка этапа [flow_waiting](meta/) платежа
+
+9. Обработка этапа [processing_capture](meta/) платежа
+
+10. Обработка этапа [updating_accounter](meta/) платежа
+
+11. Обработка этапа [finalizing_session](meta/) платежа (данный этап может исполняться несколько раз)
+
+12. Обработка этапа [finalizing_accounter](meta/) платежа
 
 
 
