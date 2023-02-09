@@ -34,7 +34,7 @@
 Самым важным в данной схеме является этап обработки в `HG`, который далее и будет рассмотрен.
 
 
-## Обработка платежа в HG
+## Абстрактный алгоритм прохождения платежа в HG
 
 Последовательность действий после получения данных платежа от `CAPI` следующая:
 1. Старт платежа в `HG`. Сначала внешняя система при помощи API описанного в damsel
@@ -144,3 +144,145 @@ CAPTURED/CANCELLED так же обрабатываются в адаптере 
 
 Примерный алгоритм работы `HG` с платежом представлен на схеме ниже
 ![](images/abstract-hg-payment-processing.png)
+
+## Детальный алгоритм проведения платежа в HG
+
+1. Создание нового инвойса ([Invoicing.Create](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L1042))
+
+    1.1. Получение дополнительных данных и проверок для создания инвойса:
+
+    1.1.1. Получение последней версии `DomainRevision` (`dmt_client:get_last_version()`)
+
+    1.1.2. Добавление [InvoiceID](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L522) в структуру `Meta`(`#{key() => value()}`)
+
+    1.1.3. По `PartyID` получается актуальная ревизия для пати ([PartyManagement.GetRevision](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L2535)),
+    а затем выполняется [PartyManagement.Checkout](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L2538) и получаются
+    данные по [Party](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L766);
+
+    1.1.4. По полученной структуре [Party](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L766) проверяеется 
+    существование магазина по `ShopID` и если он есть, то получаются данные по [Shop](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L798)
+
+    1.1.5. Происходит проверка, что `Party` и `Shop` не заблокированы и активны
+
+    1.1.6. Получение условий обслуживания для мерчанта `MerchantTerms` ([PartyManagement.ComputeContractTerms](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L2580))
+
+    1.1.7. Проверка параметров инвойса (сумма присутствует и больше нуля, поле валюты 
+    присутствует и соответствует валюте магазина (`Shop`), лимиты для магазина не были 
+    достигнуты)
+
+    1.1.8. Получение данных по [аллокациям](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L525)
+    и проверка необходимости выполнения платежа по разным магазинам (TODO: на данный момент не тестировалось и будет расписано КТТС)
+
+    1.2. Старт новой машины в `MG` (`ensure_started`) 
+
+    1.2.1. Из полученных ранее данных создается новый объект [Invoice](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L134)
+    (дополнительно задается `status = unpaid`, `created_at = now()`)
+
+    1.2.2. Выполняется запуск новой машины ([Automaton.Start](https://github.com/valitydev/machinegun-proto/blob/master/proto/state_processing.thrift#L416))
+
+    1.3. Получение состояния созданной машины (`get_invoice_state`)
+
+    1.3.1. Получение данных о машине из MG ([Automaton.GetMachine](https://github.com/valitydev/machinegun-proto/blob/master/proto/state_processing.thrift#L448))
+
+    1.3.2. "Свертывание" истории (`collapse_history`). Для списка событий производится
+    операция [merge](meta/invoice-merge-change.md), чтобы получить актуальное состояние.
+    В данном случае будет обработано состояние `invoice_created`
+
+    1.3.3. Из полученного ранее состояния машины получается состояние [инвойса](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L612) (`get_invoice_state`)
+
+    1.4. Полученное состояние [инвойса](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L612) возвращается вызываемому сервису
+
+2. Создание нового платежа (этап `new`) [Invoicing.StartPayment](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L1134)
+
+    2.0. Восстановление локального контекста платежа `St` (из данных ранее созданного инвойса)
+    
+    2.1. Получение дополнительных данных и проверока целостности данных для создания инвойса
+
+    2.1.1. По `PartyID` из локального контекста платежа `St` получается актуальная ревизия для пати ([PartyManagement.GetRevision](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L2535)),
+    а затем выполняется [PartyManagement.Checkout](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L2538) и получаются
+    данные по [Party](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L766);
+ 
+    2.1.2. Проверка, что по `Party`/`Shop` можно проводить операции (`operable`) (`assert_invoice`)
+
+    2.1.3. Проверка финализированности всех корректировок (`adjustment`) (`assert_all_adjustments_finalised`)
+
+    2.2. Старт обработки данных платежа (`start_payment`)
+
+    2.2.1. Получение `PaymentID` (получение из контекста `St` списка платежей, далее берется размер
+    массива и увеличивается на 1)
+
+    2.2.2. Проверка состояния инвойса (status = unpaid)
+
+    2.2.3. Проверка состояния инвойса (не должно находится каких-либо других платежей
+    в статусе pending)
+
+    2.2.4. `Opts = #{timestamp := OccurredAt} = get_payment_opts(St),` (TODO: уточнить у erlangteam)
+
+    2.2.5. Инициализация объекта платежа [InvoicePayment](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L293)
+    
+    2.2.5.1. Из PaymentParams (InvoicePaymentParams) достается payer, flow, payer_session_info, make_recurrent, context, 
+    external_id, processing_deadline
+
+    2.2.5.2. получается последняя Revision из данных клиенте доминанты
+
+    2.2.5.3. из объекта `Opts` (тоже часть контекста платежа) достается информация (объекты)
+      Party, Shop, Invoice
+
+    2.2.5.4. Получение условий обслуживания мерчанта [MerchantTerms](meta/get-merchant-terms.md) и формирование 
+    из него [TermSet](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L1163), где
+    `payments = PaymentTerms`, `recurrent_paytools = RecurrentTerms`
+    
+    2.2.5.5. из поля Payer достается PaymentTool
+    
+    2.2.5.6. проверка вхождения текущего платежного метода в список разрешенных для мерчанта
+    
+    2.2.5.7. проверка суммы платежа на вхождение в лимит для мерчанта
+    
+    2.2.5.8. [создание payment_flow](meta/create-payment-flow.md) в зависимости от того это instant или hold операция
+    
+    2.2.5.9. поиск родительского платежа и [валидация с учетом возможного рекуррента](meta/validate-recurrent-intention.md)
+    
+    2.2.5.10. Создание объекта [InvoicePayment](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L293)
+    , где status = pending, registration_origin = merchant
+    
+    2.2.5.11. создание события `payment_started` (`payment_started(Payment)`)
+    
+    2.2.5.12. слияние изменений (`merge_change`); так как платеж только был создан, то он
+    попадает на этап new. Сначала происходит проверка корректности перехода на данный
+    этап для платежа (`validate_transition`). Если метаданные платежа корректны, то 
+    происходит заполнение текущего состояния `St` метаинформацией:
+    - `target` - текущий глобальный этап выполнения платежа (устанавливается в processed)
+    - `payment` - данные о платежа (присваивается сформированный ранее объект Payment)
+    - `activity` - следующий шаг выполнения (устанавливается `{payment, risk_scoring}`, 
+    то есть следующий этап будет подсчет риска)
+    - `timings` - установка таймингов `hg_timings:mark(started, define_event_timestamp(Opts))` TODO: расшифровать у erlangteam
+
+    2.2.5.13. возврат параметров
+    - `PaymentSession` - результат слияния изменений (`merge_change`)
+    - `Changes` - объект Events (событие `payment_started` из пункта 2.2.5.11)
+    - `Action` - желаемое действие, продукт перехода в новое состояние (`hg_machine_action:instant()`)
+    
+    2.2.6. Формирование ответа (мапа ключ-значение):
+    - `response` - полученный из PaymentSession объект [InvoicePayment](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L618)
+    - `changes` - созданный на основании параметров `PaymentID`, `Changes`, `OccurredAt` объект [InvoicePaymentChange](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L118)
+    - `action` - желаемое действие, продукт перехода в новое состояние (объект `Action` из предыдущего пункта)
+    - `state` - объект `St`
+
+    2.3. Сохранение данных в `MG`
+
+3. Обработка этапа [risk_scoring](meta/risc-scoring-workflow.md) платежа 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

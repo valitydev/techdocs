@@ -20,22 +20,13 @@
 
     1.4. `PaymentTool` (`VS1`) - берется из (`dmsl_domain_thrift:'PaymentTool'`, `#{payment_tool := PaymentTool} = VS1 = get_varset(St, #{risk_score => get_risk_score(St)})`)
 
-    1.5. `risk_score` (`VS1`) - получение рассчитанного ранее [уровня риска](risc_scoring_workflow.md)
+    1.5. `risk_score` (`VS1`) - получение рассчитанного ранее [уровня риска](risc-scoring-workflow.md)
 
     1.6. `CreatedAt` - дата создания платежа
 
     1.7. `PaymentInstitutionRef` - достается из `Opts` (структура описана в [damsel.domain](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L1032))
 
-2. Получение условий обслуживания мерчанта `MerchantTerms`
-
-    2.1. Из данных о магазине (`Shop`) достается `ContractID`
-
-    2.2. Из списка [Party](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L766) 
-    по полученному ранее `ContractID` достается `Contract`
-
-    2.3. Проверка на то активен ли контракт
-   
-    2.4. Получение условий контракта [PartyManagement.ComputeContractTerms](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L2580) (`TermSet.payments`)
+2. Получение условий обслуживания мерчанта [MerchantTerms](meta/get-merchant-terms.md)
 
 3. Получение из `MerchantTerms` условий по возвратам (`refund`) для мерчанта (`collect_refund_varset`)
 
