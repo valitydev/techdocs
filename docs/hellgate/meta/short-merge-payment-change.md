@@ -1,5 +1,23 @@
 ## Этапы переходов для платежа в HG
 
+0. Список переходов Activity успешного платежа в HG
+```
+(processed)
+new -> risc_scoring
+risc_scoring -> routing
+routing -> cash_flow_building
+cash_flow_building -> processing_session
+processing_session -> processing_session (some time)
+processing_session -> processing_accounter
+processing_accounter -> flow_waiting
+(captured)
+flow_waiting -> processing_capture
+processing_capture -> updating_accounter
+updating_accounter -> finalizing_session
+finalizing_session -> finalizing_accounter
+finalizing_accounter -> idle
+```
+
 ---
 
 1. Если состояние не определено, но переход на этап new, а далее 
