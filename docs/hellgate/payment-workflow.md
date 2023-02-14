@@ -270,31 +270,42 @@ CAPTURED/CANCELLED так же обрабатываются в адаптере 
 
     2.3. Сохранение данных в `MG`
 
-3. Обработка этапа [risk_scoring](meta/risc-scoring-workflow.md) платежа 
+3. Обработка шага [risk_scoring](risc-scoring-workflow.md) 
 
-4. Обработка этапа [routing](meta/routing-workflow.md) платежа
+4. Обработка шага [routing](routing-workflow.md)
 
-5. Обработка этапа [cash_flow_building](meta/cash-flow-building.md) платежа
+5. Обработка шага [cash_flow_building](cash-flow-building.md)
 
-6. Обработка этапа [processing_session](meta/process-session.md) платежа. 
-   Данный этап может исполняться несколько раз до момента, когда:
+6. Обработка шага [processing_session](process-session.md). 
+   Данный этап может исполняться несколько раз (пока находится в состоянии 
+   [InvoicePaymentSessionChange -> SessionStarted](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L243)) до момента, когда:
    - сессия завершилась успешно - статус сессии равен `finished`, а результат 
    `session_succeeded`;
    - получено событие `payment_rollback_started` (будет переход на этап 
    `processing_failure`) 
+   - 
 
-7. Обработка этапа [processing_accounter](meta/), а так же генерация 
+7. Обработка шага [processing_accounter](meta/), а так же генерация 
    нового события payment_status_changed
 
-8. Обработка этапа [flow_waiting](meta/) платежа
+8. Обработка шага [flow_waiting](meta/). Операция может быть несколько 
+   интераций на данном шаге. Чтобы перейти далее необходимо:
+   - если событие находится на этапе session_started, то будет переход на этап finalizing_session
+   - если событие находится на этапе payment_capture_started, то будет переход на этап processing_capture
 
-9. Обработка этапа [processing_capture](meta/) платежа
+9. Обработка шага [finalizing_session](meta/) для этапа session_started. 
 
-10. Обработка этапа [updating_accounter](meta/) платежа
+10. Обработка шага [finalizing_accounter](meta/) для этапа session_started
 
-11. Обработка этапа [finalizing_session](meta/) платежа (данный этап может исполняться несколько раз)
+11. Обработка шага [](meta/) для этапа 
 
-12. Обработка этапа [finalizing_accounter](meta/) платежа
+12. Обработка этапа [processing_capture](meta/) платежа
+
+13. Обработка этапа [updating_accounter](meta/) платежа
+
+14. Обработка этапа [finalizing_session](meta/) платежа (данный этап может исполняться несколько раз)
+
+15. Обработка этапа [finalizing_accounter](meta/) платежа
 
 
 
