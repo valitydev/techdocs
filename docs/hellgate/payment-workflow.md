@@ -145,7 +145,9 @@ CAPTURED/CANCELLED так же обрабатываются в адаптере 
 Примерный алгоритм работы `HG` с платежом представлен на схеме ниже
 ![](images/abstract-hg-payment-processing.png)
 
-## Детальный алгоритм проведения платежа в HG
+## Детальный алгоритм проведения платежей в HG
+
+### Проведение успешного платежа
 
 1. Создание нового инвойса ([Invoicing.Create](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L1042))
 
@@ -285,31 +287,48 @@ CAPTURED/CANCELLED так же обрабатываются в адаптере 
    `processing_failure`) 
    - 
 
-7. Обработка шага [processing_accounter](meta/), а так же генерация 
+7. Обработка шага [processing_accounter](processing-accounter.md), а так же генерация 
    нового события payment_status_changed
 
-8. Обработка шага [flow_waiting](meta/). Операция может быть несколько 
+8. Обработка шага [flow_waiting](flow-waiting.md). Операция может быть несколько 
    интераций на данном шаге. Чтобы перейти далее необходимо:
    - если событие находится на этапе session_started, то будет переход на этап finalizing_session
    - если событие находится на этапе payment_capture_started, то будет переход на этап processing_capture
 
-9. Обработка шага [finalizing_session](meta/) для этапа session_started. 
+9. Обработка шага [processing_capture](processing-capture.md) платежа
 
-10. Обработка шага [finalizing_accounter](meta/) для этапа session_started
+10. Обработка шага [updating_accounter](updating-accounter.md) платежа
 
-11. Обработка шага [](meta/) для этапа 
+11. Обработка шага [finalizing_session](finalizing-session.md) для этапа session_started. 
 
-12. Обработка этапа [processing_capture](meta/) платежа
+12. Обработка шага [finalizing_accounter](finalizing-accounter.md) для этапа session_started
 
-13. Обработка этапа [updating_accounter](meta/) платежа
-
-14. Обработка этапа [finalizing_session](meta/) платежа (данный этап может исполняться несколько раз)
-
-15. Обработка этапа [finalizing_accounter](meta/) платежа
+13. Завершение платежа
 
 
+### Выполнение отмены (cancel) платежа
 
+//TODO
 
+### Выполнение отката (rollback) платежа
+
+//TODO
+
+### Обработка ошибок при проведении платежа
+
+//TODO
+
+### Выполнение возврата (refund) 
+
+//TODO
+
+### Выполнение корректировки (adjustment) платежа
+
+//TODO
+
+### Выполнение процедуры чарджбэка (chargeback)
+
+//TODO
 
 
 
