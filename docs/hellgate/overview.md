@@ -11,7 +11,7 @@
 
 Основными функциями сервиса являются:
 - [проведение платежа](payment/payment-info.md) (полного/частичного/группы платежей)
-- проведение [рекуррентных платежей](recurrent/recurrent-payment-workflow.md)
+- обработка [рекуррентных платежей](recurrent/recurrent-payment-workflow.md)
 - выполнение [возвратов](refund/refund-workflow.md), [отмен](payment/cancel-workflow.md), 
 [чарджбэков](chargeback/chargeback-workflow.md)
 - выполнение [роутинга](payment/step/routing-workflow.md) платежа в зависимости от доступности, 

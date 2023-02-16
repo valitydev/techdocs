@@ -18,20 +18,7 @@ struct InvoiceParams {
     10: optional domain.AllocationPrototype allocation
 }
 ```
-Затем [создается платеж](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L1134).
-В метод `StartPayment` передается ID ранее созданного инвойса и следующая структура:
-```plantuml
-struct InvoicePaymentParams {
-    1: required PayerParams payer
-    8: optional domain.PayerSessionInfo payer_session_info
-    2: required InvoicePaymentParamsFlow flow
-    3: optional bool make_recurrent
-    4: optional domain.InvoicePaymentID id
-    5: optional string external_id
-    6: optional domain.InvoicePaymentContext context
-    7: optional base.Timestamp processing_deadline
-}
-```
+
 2. Получив входный данные `Hellgate` преобразует их и [создает новую машину](https://github.com/valitydev/machinegun-proto/blob/master/proto/state_processing.thrift#L416) 
 в сервисе `machinegun` (интерфейс создания - [machinegun_proto.state_processing.Automation.Start](https://github.com/valitydev/machinegun-proto/blob/master/proto/state_processing.thrift#L416)).
 Структура [машины](https://github.com/valitydev/machinegun-proto/blob/master/proto/state_processing.thrift#L82) выглядит следующим образом:
@@ -82,24 +69,33 @@ struct Machine {
 
 }
 ```
-
-3. Далее `HG` дозапрашивает метаинформацию из сервиса `dominant` ([интерфейс работы с dominant](https://github.com/valitydev/damsel/blob/master/proto/domain_config.thrift#L171)) (todo: какую?)
-4. Получение дополнительной информации о пати-шопу из сервиса `party-management` ([интерфейс работы с party-management](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L2532)) (по необходимости)
-5. Проверка платежа в антифрод системе ([интерфейс работы с антифродом](https://github.com/valitydev/damsel/blob/master/proto/proxy_inspector.thrift#L54))
-6. [Роутинг](step/routing-workflow.md). Один из важнейших этапов при проведении платежа.
-Здесь определяется через какого провайдера и какой терминал будет осуществлен платеж. 
-Выбор зависит от многих параметров, но основные это доступность провайдера, лимиты, результат проверки антифродом.
-7. После того как провайдер, через которого будет проведен платеж, был определен, 
-происходит холдирование денежных средств в сервисе `shumway`
-([интерфейс для работы с shumway](https://github.com/valitydev/damsel/blob/master/proto/accounter.thrift#L120))
-8. После этапов описанных выше `HG` формирует [PaymentContext](https://github.com/valitydev/damsel/blob/master/proto/proxy_provider.thrift#L265)
+3. Затем [создается платеж](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L1134).
+В метод `StartPayment` передается ID ранее созданного инвойса и следующая структура:
+```plantuml
+struct InvoicePaymentParams {
+    1: required PayerParams payer
+    8: optional domain.PayerSessionInfo payer_session_info
+    2: required InvoicePaymentParamsFlow flow
+    3: optional bool make_recurrent
+    4: optional domain.InvoicePaymentID id
+    5: optional string external_id
+    6: optional domain.InvoicePaymentContext context
+    7: optional base.Timestamp processing_deadline
+}
+```
+4. Проверка данных платежа в системе антифрода
+5. Определение терминала для проведения платежа ([Роутинг](step/routing-workflow.md))
+6. После того как провайдер, через которого будет проведен платеж, был определен,
+   происходит холдирование денежных средств в сервисе `shumway`
+   ([интерфейс для работы с shumway](https://github.com/valitydev/damsel/blob/master/proto/accounter.thrift#L120))
+7. После этапов описанных выше `HG` формирует [PaymentContext](https://github.com/valitydev/damsel/blob/master/proto/proxy_provider.thrift#L265)
 и с использованием данных полученных после роутинга взаимодействует с [адаптером к провайдеру](https://github.com/valitydev/damsel/blob/master/proto/proxy_provider.thrift#L341)
-9. Адаптер реализует базнес логику по взаимодействию с конкретным провайдером. Первый этап для любого платежа
+8. Адаптер реализует базнес логику по взаимодействию с конкретным провайдером. Первый этап для любого платежа
 PROCESSED. В зависимости от внутренней логики адаптера вернуться в HG может несколько варианов: Sleep, Suspend, Finish.
 Финализирует этап возврат Finish состояния (может быть Success и Failed)
-10. Если получен Failed состояние, то платеж завершается (машина переводится в состояние Failed), 
+9. Если получен Failed состояние, то платеж завершается (машина переводится в состояние Failed), 
 если Success, то переходим к следующему этапу.
-11. Дальнейшие действия зависят от того какие настройки были заданы для провайдера.
+10. Дальнейшие действия зависят от того какие настройки были заданы для провайдера.
 Если это одностадийный платеж, то HG мгновенно переходит к этапу CAPTURE.
 Если двухстайдийный, то HG ожидает от мерчанта (через связку линый кабинет ->
 API -> HG) перевода платежа в финальный статус (CAPTURED или CANCELLED). 
