@@ -29,7 +29,7 @@
     3.а.2. Создание нового объекта `Action` ([hg_machine_action:new()](https://github.com/valitydev/machinegun-proto/blob/master/proto/state_processing.thrift#L320))
 
     3.а.3. Валидация этапа `processing` на дедлайн (`validate_processing_deadline`)
-    и если он был достигнут выбрасывается ошибка ([process_failure](meta/process_failure.md))
+    и если он был достигнут выбрасывается ошибка ([process_failure](../../meta/process_failure.md))
 
     3.а.4. Создается новое событие сессии `Events = start_session(Target)`
 
@@ -59,7 +59,7 @@
 
     3.b.5.a.3. Вызов адаптера к выбранному провайдеру ([ProviderProxy.ProcessPayment](https://github.com/valitydev/damsel/blob/master/proto/proxy_provider.thrift#L341)).
     В случае получения ошибки выбрасывается исключение `result_unexpected`, а так же 
-    в `fault-detector` [отправляется запись об ошибке](meta/notify_fault_detector.md) при работе с провайдером
+    в `fault-detector` [отправляется запись об ошибке](../../meta/notify_fault_detector.md) при работе с провайдером
 
     3.b.5.b. Обработка этапа `suspended` (`process_callback_timeout`). 
     Анализ объекта `timeout_behaviour` указанного в полученной сессии
@@ -74,7 +74,7 @@
     3.b.5.b.1.1.2. Вызов обработчика callback'a на стороне адатпреа 
     ([ProviderProxy.HandlePaymentCallback](https://github.com/valitydev/damsel/blob/master/proto/proxy_provider.thrift#L346))
     В случае получения ошибки выбрасывается исключение `result_unexpected`, а так же
-    в `fault-detector` [отправляется запись об ошибке](meta/notify_fault_detector.md) при работе с провайдером
+    в `fault-detector` [отправляется запись об ошибке](../../meta/notify_fault_detector.md) при работе с провайдером
 
     3.b.5.b.1.2. Обработка ответа от провайдера (`handle_callback_result`). Полученный
     от адаптера [ответ](https://github.com/valitydev/damsel/blob/master/proto/proxy_provider.thrift#L297)
@@ -84,11 +84,11 @@
     3.b.5.b.1.2.2. Обновление состояния операции (Изменился статус или если да, то смена на новую) 
     (`update_proxy_state`). 
     
-    3.b.5.b.1.3. Обработка состояния взаимодействия ([handle_interaction_intent](meta/handle_interation_intent.md))
+    3.b.5.b.1.3. Обработка состояния взаимодействия ([handle_interaction_intent](../../meta/handle_interation_intent.md))
     
     3.b.5.b.1.4. Обработка состояния прокси ([handle_proxy_intent]())
     
-    3.b.5.b.1.5. Применение изменений ([apply_result](meta/apply_result.md))
+    3.b.5.b.1.5. Применение изменений ([apply_result](../../meta/apply_result.md))
 
     3.b.5.b.2. В `timeout_behaviour` указан `operation_failure`
 
@@ -96,11 +96,11 @@
 
     3.b.5.b.2.2. Выполняется операция mg_stateproc_ComplexAction
 
-    3.b.5.b.2.3. Применение изменений ([apply_result](meta/apply_result.md))
+    3.b.5.b.2.3. Применение изменений ([apply_result](../../meta/apply_result.md))
 
     3.b.5.c. Обработка этапа `repair`. Данный этап аналогичен пункту 3.b.5.b., 
     кроме смены статуса сессии на session_activated, а затем Применение 
-    изменений ([apply_result](meta/apply_result.md))
+    изменений ([apply_result](../../meta/apply_result.md))
 
     3.b.5.d. Обработка этапа `finished`. Остается все как есть
 
@@ -140,7 +140,7 @@
     ```
 
     3.b.3.2. Если `status = finished`, а `result = session_failed`, то происходит обработка
-    ошибки ([process_failure](meta/process_failure.md))
+    ошибки ([process_failure](../../meta/process_failure.md))
 
     3.b.3.3. Если ни одно из условий не выполняется, то происходит переход к следующему шагу
 

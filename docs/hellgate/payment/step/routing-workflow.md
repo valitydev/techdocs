@@ -26,7 +26,7 @@
 
     1.7. `PaymentInstitutionRef` - достается из `Opts` (структура описана в [damsel.domain](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L1032))
 
-2. Получение условий обслуживания мерчанта [MerchantTerms](meta/get-merchant-terms.md)
+2. Получение условий обслуживания мерчанта [MerchantTerms](../../meta/get-merchant-terms.md)
 
 3. Получение из `MerchantTerms` условий по возвратам (`refund`) для мерчанта (`collect_refund_varset`)
 
@@ -165,7 +165,7 @@ terminal_ref(#route{terminal_ref = Ref}) ->
     
     12.1. Фиксация лимитов для провайдеров (холдирование). (`hold_limit_routes`)
     
-    12.1.1. Формируется [route record](meta/route-record.md)(providerRef, terminalRef)
+    12.1.1. Формируется [route record](../../meta/route-record.md)(providerRef, terminalRef)
 
     12.1.2. Получаются условия для провайдера и терминала из party-management 
     ([PartyManagement.ComputeProviderTerminalTerms](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L2710))
@@ -177,7 +177,7 @@ terminal_ref(#route{terminal_ref = Ref}) ->
 
     12.2. Получение списка терминалов без переполнения лимита (`get_limit_overflow_routes`)
 
-    12.2.1. Формируется пара [route record](meta/route-record.md)(providerRef, terminalRef)
+    12.2.1. Формируется пара [route record](../../meta/route-record.md)(providerRef, terminalRef)
 
     12.2.2. Получаются условия для провайдера и терминала из party-management 
     ([PartyManagement.ComputeProviderTerminalTerms](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L2710))
@@ -232,20 +232,20 @@ terminal_ref(#route{terminal_ref = Ref}) ->
     случайное число и получается некоторое random значение. 
 
     13.1.2.1.2.2. Для каждого элемента из списка путей 
-    [рассчитывается случайное значение веса](meta/calc_random_condition.md) (`calc_random_condition`)
+    [рассчитывается случайное значение веса](../../meta/calc_random_condition.md) (`calc_random_condition`)
 
     13.1.2.2. Подсчет условных баллов для полученных в результате балансировки путей (терминалов) (`score_route`)
 
-    13.1.2.2.1. Из объекта [Route](meta/route-record.md) достается приоритет, вес и [pin](meta/pin.md) терминала
+    13.1.2.2.1. Из объекта [Route](../../meta/route-record.md) достается приоритет, вес и [pin](../../meta/pin.md) терминала
 
     13.1.2.2.2. Создается объект [route_scores](meta/route_scores.md) куда записываются:
     - `availability_condition` - записывается состояние пути по показателю доступности 
     (`dead`/`alive` в зависимости от `fail_rate`) 
     - `conversion_condition` - записывается состояние пути по показателю конверсии
       (`dead`/`alive` в зависимости от `fail_rate`)
-    - `priority_rating` - приоритет, полученный из [Route](meta/route-record.md)
+    - `priority_rating` - приоритет, полученный из [Route](../../meta/route-record.md)
     - `pin` - записывается хэш для объекта `pin`
-    - `random_condition` - вес, полученный из [Route](meta/route-record.md)
+    - `random_condition` - вес, полученный из [Route](../../meta/route-record.md)
     - `availability` - числовой показатель доступности (`fail_rate`)
     - `conversion` - числовой показатель конверсии (`fail_rate`)
 
@@ -255,10 +255,10 @@ terminal_ref(#route{terminal_ref = Ref}) ->
 
     13.1.2.3.1.1. Задаются стартовые `IdealRoute` и `ChosenRoute`
 
-    13.1.2.3.1.2. Текущий элемент сравнивается с `IdealRoute` через функцию [select_better_route_ideal](meta/select_better_route_ideal.md).
+    13.1.2.3.1.2. Текущий элемент сравнивается с `IdealRoute` через функцию [select_better_route_ideal](../../meta/select_better_route_ideal.md).
     Значение, которое возвращает эта функция, становится новым `IdealRoute`
 
-    13.1.2.3.1.3. Текущий элемент сравнивается с `ChosenRoute` через функцию [select_better_route](meta/select_better_route.md).
+    13.1.2.3.1.3. Текущий элемент сравнивается с `ChosenRoute` через функцию [select_better_route](../../meta/select_better_route.md).
     Значение, которое возвращает эта функция, становится новым `ChosenRoute`
 
     13.1.2.3.2. После прохода по всему массиву возвращается пара `{ChosenScoredRoute, IdealRoute}`
@@ -267,7 +267,7 @@ terminal_ref(#route{terminal_ref = Ref}) ->
     Формируется объект RouteChoiceContext, куда записываются поля:
     - `chosen_route` - `ChosenRoute`
     - `preferable_route` - `IdealRoute`
-    - `reject_reason` - заполняется при помощи функции [map_route_switch_reason](meta/map_route_switch_reason.md)
+    - `reject_reason` - заполняется при помощи функции [map_route_switch_reason](../../meta/map_route_switch_reason.md)
 
     13.1.2.5. RouteChoiceContext возвращается выше по контексту
 

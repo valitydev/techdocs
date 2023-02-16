@@ -32,7 +32,7 @@
     3.1. Получение из [InvoicePayment](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L293) 
     данных `Flow` и `CreatedAt`
 
-    3.2. Непосредственная реконструкция флоу при помощи функции [reconstruct_payment_flow(Flow, CreatedAt, VS)](meta/reconstruct_payment_flow.md)
+    3.2. Непосредственная реконструкция флоу при помощи функции [reconstruct_payment_flow(Flow, CreatedAt, VS)](../../meta/reconstruct_payment_flow.md)
 
 4. Создание набора для валидации:
    - `party_id` 

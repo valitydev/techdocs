@@ -129,7 +129,7 @@ struct Machine {
 3. Далее HG дозапрашивает метаинформацию из сервиса `dominant` ([интерфейс работы с dominant](https://github.com/valitydev/damsel/blob/master/proto/domain_config.thrift#L171)) (todo: какую?)
 4. Получение дополнительной информации о пати-шопу из сервиса `party-management` ([интерфейс работы с party-management](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L2532)) (по необходимости)
 5. Проверка платежа в антифрод системе `fraudo` ([интерфейс работы с антифродом](https://github.com/valitydev/damsel/blob/master/proto/proxy_inspector.thrift#L54))
-6. [Роутинг](routing-workflow.md). Один из важнейших этапов при проведении платежа.
+6. [Роутинг](../payment/step/routing-workflow.md). Один из важнейших этапов при проведении платежа.
    Здесь определяется через какого провайдера и какой терминал будет осуществлен платеж.
    Выбор зависит от многих параметров, но основные это доступность провайдера, лимиты, 
    результат проверки антифродом, а так же возможность проведение периодических платежей.

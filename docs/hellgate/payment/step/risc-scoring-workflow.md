@@ -14,7 +14,7 @@
 0. В `MG` машина достигает таймаута и вызывает `HG` на обработку. В контексте машины 
    `Activity = risc_scoring`
 
-1. `HG` получает сигнал от `MG` и [начинает его обработку](machinegun-signal-processing-workflow.md) (`process_signal`)
+1. `HG` получает сигнал от `MG` и [начинает его обработку](../../machinegun/machinegun-signal-processing-workflow.md) (`process_signal`)
 
 2. Пройдя стандартные шаги из пункта 2 сигнал на исполнение доходит до начала обработки этапа
    роутинга `process_timeout({payment, risk_scoring}, Action, St)`
@@ -24,14 +24,14 @@
 
 1. Получение входных данных о платеже и установка локальных переменных.
 
-   1.1. `Opts`, `Revision`, `Payment` - получаются из переменной состояния [St](meta/st.md), объявленной и заполненной ранее
+   1.1. `Opts`, `Revision`, `Payment` - получаются из переменной состояния [St](../../meta/st.md), объявленной и заполненной ранее
 
-   1.2. `PaymentFlow` ([InvoicePaymentFlow](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L604)) - воссоздается из данных платежа ([reconstruct_payment_flow](meta/create-payment-flow.md))
+   1.2. `PaymentFlow` ([InvoicePaymentFlow](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L604)) - воссоздается из данных платежа ([reconstruct_payment_flow](../../meta/create-payment-flow.md))
 
    1.3. `PaymentTool` - достается из `Payment` ([Payer часть] (https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L301))
 
    1.4. [PaymentInstitutionRef](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L1032) - 
-   достается из [Opts](meta/opts.md) (объявляется и заполняется на этапе восстановления контекста из данных машины (сигнала))
+   достается из [Opts](../../meta/opts.md) (объявляется и заполняется на этапе восстановления контекста из данных машины (сигнала))
 
 2. Получение информации о `PaymentInstitution` ([PartyManagement.ComputePaymentInstitution](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L2766))
 

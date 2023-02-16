@@ -211,52 +211,9 @@ Target: charged_back
     14.2. Если по итогу merge у возврата статус failed или succeeded, то Activity устанавливается 
     в idle
 
-```erlang
-merge_change(Change = ?refund_ev(ID, Event), St, Opts) ->
-    St1 =
-        case Event of
-            ?refund_created(_, _, _) ->
-                _ = validate_transition(idle, Change, St, Opts),
-                St#st{activity = {refund_new, ID}};
-            ?session_ev(?refunded(), ?session_started()) ->
-                _ = validate_transition([{refund_new, ID}, {refund_session, ID}], Change, St, Opts),
-                St#st{activity = {refund_session, ID}};
-            ?session_ev(?refunded(), ?session_finished(?session_succeeded())) ->
-                _ = validate_transition({refund_session, ID}, Change, St, Opts),
-                St#st{activity = {refund_accounter, ID}};
-            ?refund_status_changed(?refund_succeeded()) ->
-                _ = validate_transition([{refund_accounter, ID}], Change, St, Opts),
-                RefundSt0 = merge_refund_change(Event, try_get_refund_state(ID, St), St, Opts),
-                Allocation = get_allocation(St),
-                FinalAllocation = hg_maybe:apply(
-                    fun(A) ->
-                        #domain_InvoicePaymentRefund{allocation = RefundAllocation} = get_refund(
-                            RefundSt0
-                        ),
-                        {ok, FA} = hg_allocation:sub(A, RefundAllocation),
-                        FA
-                    end,
-                    Allocation
-                ),
-                St#st{allocation = FinalAllocation};
-            ?refund_rollback_started(_) ->
-                _ = validate_transition([{refund_session, ID}, {refund_new, ID}], Change, St, Opts),
-                St#st{activity = {refund_failure, ID}};
-            ?refund_status_changed(?refund_failed(_)) ->
-                _ = validate_transition([{refund_failure, ID}], Change, St, Opts),
-                St;
-            _ ->
-                _ = validate_transition([{refund_session, ID}], Change, St, Opts),
-                St
-        end,
-    RefundSt1 = merge_refund_change(Event, try_get_refund_state(ID, St1), St1, Opts),
-    St2 = set_refund_state(ID, RefundSt1, St1),
-    case get_refund_status(get_refund(RefundSt1)) of
-        {S, _} when S == succeeded; S == failed ->
-            St2#st{activity = idle};
-        _ ->
-            St2
-    end;
+```
+refund_new -> refund_session -> refund_accounter -> idle
+refund_new -> refund_session -> refund_failure
 ```
 ---
 15. Если пришедший change = adjustment_ev. Анализ собития и если оно рано:
@@ -300,54 +257,15 @@ CashFlow doesn't exist -> routing_failure
 18. Если пришедший change = chargeback_ev, то идет проверка события и выполнение
     конктретного шага
 
-```erlang
-merge_change(Change = ?chargeback_ev(ID, Event), St, Opts) ->
-    St1 =
-        case Event of
-            ?chargeback_created(_) ->
-                _ = validate_transition(idle, Change, St, Opts),
-                St#st{activity = {chargeback, ID, preparing_initial_cash_flow}};
-            ?chargeback_stage_changed(_) ->
-                _ = validate_transition(idle, Change, St, Opts),
-                St;
-            ?chargeback_levy_changed(_) ->
-                _ = validate_transition([idle, {chargeback, ID, updating_chargeback}], Change, St, Opts),
-                St#st{activity = {chargeback, ID, updating_chargeback}};
-            ?chargeback_body_changed(_) ->
-                _ = validate_transition([idle, {chargeback, ID, updating_chargeback}], Change, St, Opts),
-                St#st{activity = {chargeback, ID, updating_chargeback}};
-            ?chargeback_cash_flow_changed(_) ->
-                Valid = [{chargeback, ID, Activity} || Activity <- [preparing_initial_cash_flow, updating_cash_flow]],
-                _ = validate_transition(Valid, Change, St, Opts),
-                case St of
-                    #st{activity = {chargeback, ID, preparing_initial_cash_flow}} ->
-                        St#st{activity = idle};
-                    #st{activity = {chargeback, ID, updating_cash_flow}} ->
-                        St#st{activity = {chargeback, ID, finalising_accounter}}
-                end;
-            ?chargeback_target_status_changed(?chargeback_status_accepted()) ->
-                _ = validate_transition([idle, {chargeback, ID, updating_chargeback}], Change, St, Opts),
-                case St of
-                    #st{activity = idle} ->
-                        St#st{activity = {chargeback, ID, finalising_accounter}};
-                    #st{activity = {chargeback, ID, updating_chargeback}} ->
-                        St#st{activity = {chargeback, ID, updating_cash_flow}}
-                end;
-            ?chargeback_target_status_changed(_) ->
-                _ = validate_transition([idle, {chargeback, ID, updating_chargeback}], Change, St, Opts),
-                St#st{activity = {chargeback, ID, updating_cash_flow}};
-            ?chargeback_status_changed(_) ->
-                _ = validate_transition([idle, {chargeback, ID, finalising_accounter}], Change, St, Opts),
-                St#st{activity = idle}
-        end,
-    ChargebackSt = merge_chargeback_change(Event, try_get_chargeback_state(ID, St1)),
-    set_chargeback_state(ID, ChargebackSt, St1);
-
--define(chargeback_ev(ChargebackID, Payload),
-  {invoice_payment_chargeback_change, #payproc_InvoicePaymentChargebackChange{
-    id = ChargebackID,
-    payload = Payload
-  }}
-).
+```
+created | stage_changed -> idle
+updating_chargeback -> updating_chargeback
+preparing_initial_cash_flow -> idle
+updating_cash_flow -> finalising_accounter
+idle -> finalising_accounter
+idle (status_accepted) -> finalising_accounter
+updating_chargeback -> updating_cash_flow
+updating_chargeback -> updating_cash_flow
+finalising_accounter -> idle
 ```
 ---

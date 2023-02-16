@@ -10,12 +10,15 @@
 
 
 Основными функциями сервиса являются:
-- [проведение платежа](payment-workflow.md) (полного/частичного/группы платежей)
-- проведение [рекуррентных платежей](recurrent-payment-workflow.md)
-- выполнение [возвратов](refund-workflow.md), [отмен](cancel-workflow.md), [чарджбэков](chargeback-workflow.md)
-- выполнение [роутинга](routing-workflow.md) платежа в зависимости от доступности, лимитов и т.п.
+- [проведение платежа](payment/payment-info.md) (полного/частичного/группы платежей)
+- проведение [рекуррентных платежей](recurrent/recurrent-payment-workflow.md)
+- выполнение [возвратов](refund/refund-workflow.md), [отмен](payment/cancel-workflow.md), 
+[чарджбэков](chargeback/chargeback-workflow.md)
+- выполнение [роутинга](payment/step/routing-workflow.md) платежа в зависимости от доступности, 
+лимитов и т.п.
 
 К дополнительным функциям можно отнести:
-- обработка [корректировок платежей](adjustment-workflow.md)
+- обработка [корректировок платежей](adjustment/adjustment-workflow.md)
 
-Особое внимание стоит уделать работе [HG совместно с MG]() как важной части работы ядра системы.
+Особое внимание стоит уделать работе [HG совместно с MG](machinegun/hg-mg-workflow.md) 
+как важной части работы ядра системы.
