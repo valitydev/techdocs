@@ -36,5 +36,5 @@
 ---
 
 Далее:
-- [абстактный алгоритм проведения платежа в Hellgate](abstrach-hg-payment-workflow.md)
+- [абстактный алгоритм проведения платежа в Hellgate](abstract-hg-payment-workflow.md)
 - [подробный алгоритм проведения платежа в Hellgate](hg-payment-workflow.md)
