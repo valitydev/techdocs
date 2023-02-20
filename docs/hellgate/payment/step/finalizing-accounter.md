@@ -2,6 +2,12 @@
 
 ### Реализация
 
-1. `HG` получает сигнал от `MG` и [начинает его обработку](../../machinegun/machinegun-signal-processing-workflow.md) (`process_signal`)
+В данном случае выполняется процесс аналогичный описанному в шаге [processing_accounter](processing-accounter.md)
 
-2. Получение из контекста [St()](docs/hellgate/meta/st.md) Activity, Action и Target
+---
+
+Назад:
+- [Обработка шага "finalizing_session"](finalizing-session.md)
+
+В начало:
+- [Детальный алгоритм проведения платежей в HG](../hg-payment-workflow.md)

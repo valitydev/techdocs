@@ -43,3 +43,10 @@
 
 4. Полученное состояние [инвойса](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L612) возвращается вызываемому сервису
 
+---
+
+Далее:
+- [Обработка шага "new"](new-payment.md)
+
+В начало:
+- [Детальный алгоритм проведения платежей в HG](../hg-payment-workflow.md)

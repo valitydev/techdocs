@@ -144,4 +144,15 @@
 
     3.b.3.3. Если ни одно из условий не выполняется, то происходит переход к следующему шагу
 
-    
+
+---
+
+Далее:
+- [Обработка шага "processing_accounter"](processing-accounter.md)
+
+Назад:
+- [Обработка шага "cash_flow_building"](cash-flow-building.md)
+
+В начало:
+- [Детальный алгоритм проведения платежей в HG](../hg-payment-workflow.md)
+ 

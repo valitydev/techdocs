@@ -286,5 +286,14 @@ terminal_ref(#route{terminal_ref = Ref}) ->
             )},
     ```
 
+---
 
+Далее:
+- [Обработка шага "cash_flow_building"](cash-flow-building.md)
+
+Назад:
+- [Обработка шага "risc_scoring"](risc-scoring-workflow.md)
+
+В начало:
+- [Детальный алгоритм проведения платежей в HG](../hg-payment-workflow.md)
 

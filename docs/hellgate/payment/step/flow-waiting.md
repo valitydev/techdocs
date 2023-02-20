@@ -58,3 +58,15 @@
 
 6. Завершение шага `flow_waiting` (возврат сгенерированных событий и метаданных для 
    машины MG)
+
+
+---
+
+Далее:
+- [Обработка шага "processing_capture"](processing-capture.md)
+
+Назад:
+- [Обработка шага "processing_accounter"](processing-accounter.md)
+
+В начало:
+- [Детальный алгоритм проведения платежей в HG](../hg-payment-workflow.md)

@@ -44,7 +44,7 @@
     
     2.5.7. проверка суммы платежа на вхождение в лимит для мерчанта
     
-    2.5.8. [создание payment_flow](meta/create-payment-flow.md) в зависимости от того это instant или hold операция
+    2.5.8. [создание payment_flow](meta/create-payment-flow.md) в зависимости от того это instant или hold операции
     
     2.5.9. поиск родительского платежа и [валидация с учетом возможного рекуррента](meta/validate-recurrent-intention.md)
     
@@ -76,3 +76,14 @@
 
 3. Сохранение данных в `MG`
 
+
+---
+
+Далее:
+- [Обработка шага "risc_scoring"](risc-scoring-workflow.md)
+
+Назад:
+- [Инициализация данных платежа](init-payment.md)
+
+В начало:
+- [Детальный алгоритм проведения платежей в HG](../hg-payment-workflow.md)

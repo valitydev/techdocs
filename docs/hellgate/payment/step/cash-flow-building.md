@@ -139,4 +139,13 @@
 
 
 
+---
 
+Далее:
+- [Обработка шага "process_session"](process-session.md)
+
+Назад:
+- [Обработка шага "routing"](routing-workflow.md)
+
+В начало:
+- [Детальный алгоритм проведения платежей в HG](../hg-payment-workflow.md)

@@ -19,15 +19,15 @@
 
 3. Установка таймаута для машины
 
-    3.1. Если target = processed
+    3.1. Если `target` = `processed`
 
-    3.1.1. Если payment_flow = instant, то таймаут устанавливается в 0
+    3.1.1. Если `payment_flow = instant`, то таймаут устанавливается в 0
 
-    3.1.2. Если payment_flow = hold, то устанавливается дедлайн для операции (ненулевой таймаут)
+    3.1.2. Если `payment_flow = hold`, то устанавливается дедлайн для операции (ненулевой таймаут)
 
-    3.2. При любом другом target возвращется исходный [Action]()
+    3.2. При любом другом `target` возвращается исходный [Action]()
 
-4. Создание нового события payment_status_changed от полученного Target (иными словами 
+4. Создание нового события payment_status_changed от полученного `Target` (иными словами 
    создание нового объекта [InvoicePaymentStatusChanged](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L226))
 
    ```erlang
@@ -42,3 +42,13 @@
    (Возврат нового события для сохранения в `MG`, `activity` устанавливается в `flow_waiting`)
 
 
+---
+
+Далее:
+- [Обработка шага "flow_waiting"](flow-waiting.md)
+
+Назад:
+- [Обработка шага "process_session"](process-session.md)
+
+В начало:
+- [Детальный алгоритм проведения платежей в HG](../hg-payment-workflow.md)
