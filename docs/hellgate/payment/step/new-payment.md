@@ -4,7 +4,7 @@
     
 1. Получение дополнительных данных и проверока целостности данных для создания инвойса
 
-    1.1. По `PartyID` из локального контекста платежа [St](docs/hellgate/meta/st.md) получается актуальная ревизия для пати 
+    1.1. По `PartyID` из локального контекста платежа [St](../../meta/st.md) получается актуальная ревизия для пати 
     ([PartyManagement.GetRevision](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L2535)),
     а затем выполняется [PartyManagement.Checkout](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L2538) 
     и получаются данные по [Party](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L766);
@@ -15,7 +15,7 @@
 
 2. Старт обработки данных платежа (`start_payment`)
 
-    2.1. Получение `PaymentID` (получение из контекста [St](docs/hellgate/meta/st.md) списка платежей, далее берется размер
+    2.1. Получение `PaymentID` (получение из контекста [St](../../meta/st.md) списка платежей, далее берется размер
     массива и увеличивается на 1)
 
     2.2. Проверка состояния инвойса (`status = unpaid`)
@@ -23,7 +23,7 @@
     2.3. Проверка состояния инвойса (не должно находится каких-либо других платежей
     в статусе `pending`)
 
-    2.4. Из контекста [St](docs/hellgate/meta/st.md) получается структура [Opts](docs/hellgate/meta/opts.md), а из нее
+    2.4. Из контекста [St](../../meta/st.md) получается структура [Opts](../../meta/opts.md), а из нее
     время события `OccurredAt`
     (`Opts = #{timestamp := OccurredAt} = get_payment_opts(St),` (TODO: уточнить у erlangteam))
 
@@ -34,10 +34,10 @@
 
     2.5.2. Из клинета доминанты (метаданных) получается последняя ревизия (`Revision`) 
 
-    2.5.3. из объекта [Opts](docs/hellgate/meta/opts.md) (тоже часть контекста платежа) достается информация (объекты)
+    2.5.3. из объекта [Opts](../../meta/opts.md) (тоже часть контекста платежа) достается информация (объекты)
     `Party`, `Shop`, `Invoice`
 
-    2.5.4. Получение условий обслуживания мерчанта [MerchantTerms](meta/get-merchant-terms.md) и формирование 
+    2.5.4. Получение условий обслуживания мерчанта [MerchantTerms](../../meta/get-merchant-terms.md) и формирование 
     из него [TermSet](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L1163), где
     `payments = PaymentTerms`, `recurrent_paytools = RecurrentTerms`
     
@@ -48,9 +48,9 @@
     
     2.5.7. Проверка суммы платежа на вхождение в лимит для мерчанта
     
-    2.5.8. [Создание payment_flow](docs/hellgate/meta/create-payment-flow.md) в зависимости от типа операции (`instant` или `hold`)
+    2.5.8. [Создание payment_flow](../../meta/create-payment-flow.md) в зависимости от типа операции (`instant` или `hold`)
     
-    2.5.9. Поиск родительского платежа и [валидация с учетом возможного рекуррента](docs/hellgate/meta/validate-recurrent-intention.md)
+    2.5.9. Поиск родительского платежа и [валидация с учетом возможного рекуррента](../../meta/validate-recurrent-intention.md)
     
     2.5.10. Создание объекта [InvoicePayment](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L293)
     , где `status = pending`, `registration_origin = merchant`
@@ -76,7 +76,7 @@
     - `response` - полученный из PaymentSession объект [InvoicePayment](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L618)
     - `changes` - созданный на основании параметров `PaymentID`, `Changes`, `OccurredAt` объект [InvoicePaymentChange](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L118)
     - `action` - желаемое действие, продукт перехода в новое состояние (объект `Action` из предыдущего пункта)
-    - `state` - объект [St](docs/hellgate/meta/st.md)
+    - `state` - объект [St](../../meta/st.md)
 
 3. Сохранение данных в `MG`
 
