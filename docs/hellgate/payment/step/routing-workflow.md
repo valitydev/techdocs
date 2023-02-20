@@ -12,11 +12,11 @@
 
 1. Получение входных данных о платеже и установка локальных переменных.
 
-    1.1. `Opts` - опциональные данные платежа (options)
+    1.1. [Opts](../../meta/opts.md) - метаданные инвойса
 
     1.2. `Revision` - актуальня [ревизия](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L299)
 
-    1.3. `Payment` - контекст платежа
+    1.3. `Payment` - данные платежа
 
     1.4. `PaymentTool` (`VS1`) - берется из (`dmsl_domain_thrift:'PaymentTool'`, `#{payment_tool := PaymentTool} = VS1 = get_varset(St, #{risk_score => get_risk_score(St)})`)
 
@@ -41,7 +41,7 @@
 
 5. Получение `PaymentInstitution` ([PartyManagement.ComputePaymentInstitution](https://github.com/valitydev/damsel/blob/master/proto/payment_processing.thrift#L2766))
 
-6. Из объекта `St()` достается `Payer` ([InvoicePayment.Payer](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L301))
+6. Из объекта [St()](../../meta/st.md) достается `Payer` ([InvoicePayment.Payer](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L301))
 
 7. Проверка на присутствие ранее определенных путей (актуально для рекуррентов). 
    Если такая информация есть, то она и берется для проведения платежа, иначе 
@@ -87,8 +87,8 @@
     9.4 Результат вызова функции `ComputeProviderTerminalTerms` [ProvisionTermSet](https://github.com/valitydev/damsel/blob/master/proto/domain.thrift#L2386)
     проверяется на предмет ошибки и если она была, то выбрасывается исключение `rejected`
     иначе происходит проверка применимости условий полученных от `PartyManagement` и 
-    контекста текущего платежа (acceptable_payment_terms):
-    - можно ли использовать полученный TermSet
+    контекста текущего платежа (`acceptable_payment_terms`):
+    - можно ли использовать полученный `TermSet`
     - тестовая проверка условий для `currency`, `category`, `payment_tool`, `cost`.
       (Например: `try_accept_term(ParentName, currency, getv(currency, VS), CurrenciesSelector)` 
       и далее `test_term(currency, V, Vs) -> ordsets:is_element(V, Vs);`)
